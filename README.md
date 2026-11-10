@@ -37,6 +37,41 @@ They connect through a capacity threshold: writing is cheap, so put a tripwire o
 
 ---
 
+## What discipline actually covers (read this first)
+
+**It sets rules for how memory *should* be written, but Hermes does not enforce those rules on writes.**
+
+There is no code path from `memory()` to the skill system — loading discipline before writing is entirely up to the model, and realistically happens only when the session topic is already about memory or the environment. Observed reality:
+
+| Write source | Constrained by discipline? |
+|---|---|
+| You ask "remember X" | Probabilistic — only if the topic triggers a load |
+| Agent writes something mid-task | **Mostly no** — the casual write is exactly the one that skips `skill_view` |
+| Background fork auto-proposals | **Never** — forks can't see the skill mechanism |
+
+So discipline's real role is a **write-quality reference** (should it exist, which layer, how to phrase it), not a write gate. Don't treat installing it as "memory is now clean."
+
+---
+
+## Two maintenance strategies for MEMORY
+
+Since the write side can't be enforced, curation has to happen via a maintenance strategy:
+
+**Strategy A: free writes + cleanup after the fact (what the author runs)**
+
+- Let `memory()` write freely; discipline raises write quality probabilistically
+- The 80% yellow line is a **hard trigger**: when the tool reports `current/limit` ≥ 80%, the agent must add a warning line that turn and suggest a cleanup dry-run
+- The cost is "window pollution": between cleanup runs, bad entries keep occupying the per-turn prompt budget. With a low write rate and low watermark, that cost is small
+
+**Strategy B: approve every write (`memory.write_approval: true`)**
+
+- Mechanically enforced: all memory/skills writes land in a pending directory for human review
+- The catch: review gets deferred to a moment when you **no longer have the context that motivated the write** — batch-approving a day later produces the worst judgments; scheduled/background task writes pile up
+
+**Trade-off in one line:** the problem with B isn't review itself, it's review timing. If your write rate is low, take A and treat the yellow line as the gate. Keep discipline either way — its rule text is the prompt source for a future "pending + scripted semantic review" enforcement chain.
+
+---
+
 ## Contents
 
 ### `memory-write-discipline` — original
@@ -89,7 +124,7 @@ hermes config get memory.user_char_limit     # default 4000
 
 Skills are **not a deterministic channel**. The model decides on its own whether to load one, based on the description; there is no forced trigger. A skill therefore can't be the *only* delivery mechanism for a rule you depend on.
 
-Put one line in a layer that's injected every turn (`SOUL.md`, or global `AGENTS.md`):
+The cheapest way to raise the odds: put one line in a layer that's injected every turn (`SOUL.md`) — note this only raises the probability, it is not a mechanical guarantee:
 
 ```markdown
 Check memory capacity after writing: at >=80% add a warning line, at >=95% free space before writing.
@@ -133,6 +168,9 @@ All observed, not theorized:
 5. **Characters, not bytes.** A CJK-heavy memory file is ~3× its byte size. Use the `current/limit` the tool reports, not `os.path.getsize`.
 6. **Never batch-edit memory from a background proposal.** A fork with no shell can write but cannot verify; auto-generated memory edits have been observed corrupting content. Keep a human in the loop.
 7. **A pointer is not delivery.** "It's in Hindsight" proves the content is stored and retrievable, not that prefetch will surface it when needed.
+8. **Writing a `patch` `old_text` from the in-session snapshot fails.** Memory is injected as a frozen snapshot taken at session start; mid-session writes hit disk but never update the snapshot — the file may have changed. Always read the file on disk before patching, never rely on a version quoted earlier in the conversation. (Observed: one 3-operation atomic batch rolled back entirely because of this — atomicity prevented a half-applied state.)
+9. **The yellow-line check only fires after a `memory()` write.** A session that never writes never checks, even if the watermark rose meanwhile. Background fork writes bypass the checkpoint entirely. To check proactively, run `hermes memory status` or just ask the agent.
+10. **`patch` `old_text` must match the on-disk entry verbatim.** The fact you want to edit may not be its own entry at all — it may be folded into another one. Patching from memory of what the entry "should" say usually just fails to match.
 
 ---
 
