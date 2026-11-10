@@ -1,0 +1,6 @@
+# scratch / 临时产物
+*.tmp
+*.lock
+__pycache__/
+.DS_Store
+Thumbs.db
