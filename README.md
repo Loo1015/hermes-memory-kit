@@ -18,7 +18,7 @@ Hermes Agent 记忆写入纪律与清理路由。两个技能：一个管**往�
 **1. 装两个技能**
 
 ```bash
-git clone https://github.com/<your-name>/hermes-memory-plus.git
+git clone https://github.com/Loo1015/hermes-memory-plus.git
 cp -r hermes-memory-plus/skills/memory-write-discipline <SKILLS_DIR>/
 cp -r hermes-memory-plus/skills/memory-cleanup           <SKILLS_DIR>/
 ```
