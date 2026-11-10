@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- 仓库更名 `hermes-memory-plus` → `hermes-memory-skills`：原名易被误认为插件或项目，实为技能集合。旧名保留重定向。
+- README 拆为中英双语：`README.md`（英文，主页）+ `README.zh-CN.md`（中文），互相链接。
+- `LICENSE` 恢复为纯 MIT 正文，GitHub 许可证探测可正确识别为 MIT；第三方署名统一移入 `THIRD-PARTY.md`。
+
 ## 1.1.0
 
 - `memory-write-discipline`: 新增 §0.5「写后容量提醒」——写入后按 80% / 95% 两档决定是否提醒、是否必须先腾空间。
