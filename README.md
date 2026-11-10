@@ -120,18 +120,11 @@ hermes config get memory.memory_char_limit   # default 6000
 hermes config get memory.user_char_limit     # default 4000
 ```
 
-**3. Add the tripwire — this step is not optional**
+**3. Know that the skills won't fire on their own**
 
-Skills are **not a deterministic channel**. The model decides on its own whether to load one, based on the description; there is no forced trigger. A skill therefore can't be the *only* delivery mechanism for a rule you depend on.
+Skills are **not a deterministic channel**. The model decides on its own whether to load one, based on the description; there is no forced trigger. Installed correctly, the two `SKILL.md` files are still just documentation sitting on disk — whether they get read depends on what the session is about.
 
-The cheapest way to raise the odds: put one line in a layer that's injected every turn (`SOUL.md`) — note this only raises the probability, it is not a mechanical guarantee:
-
-```markdown
-Check memory capacity after writing: at >=80% add a warning line, at >=95% free space before writing.
-Bulk cleanup only via memory-cleanup (dry-run + user approval). Never auto-clean.
-```
-
-Without this line, the two `SKILL.md` files are just documentation sitting on disk.
+Don't paper over this by pasting a reminder into `SOUL.md`: that only converts "remind the model to load the skill" into one more line you pay for every turn, which still doesn't guarantee anything runs. Real mechanical enforcement means either a source hook or `memory.write_approval` (strategy B above). The test for whether a rule needs that is what happens if it's missed once — not how often it comes up.
 
 **4. Optional first run**
 

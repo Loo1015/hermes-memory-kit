@@ -5,7 +5,7 @@
 - README（中英）：新增「discipline 的作用范围」一节——明确 discipline 只规定写入规则，Hermes 的写入不受它强制控制（会话内顺手写基本不经过它，后台提案完全不经它）；定位是写入质量参考，不是写入闸门。
 - README（中英）：新增「MEMORY 的两种维护方式」——路线 A（任写 + cleanup 事后筛 + 80% 黄线硬触发）与路线 B（`memory.write_approval` 全量审核）的取舍；作者采用 A。
 - README（中英）：已知坑补 3 条实测项——凭会话冻结快照写 `patch` `old_text` 会失败（附原子回滚实例）、黄线提醒只在 `memory()` 写入后检查（后台写入绕过检查点）、`old_text` 须与磁盘条目逐字一致（事实可能混在别的条目里）。
-- README（中英）：闸线说明从「SOUL.md 或全局 AGENTS.md」改为仅 `SOUL.md`，并标注只是提高概率、非机制保证。
+- README（中英）：闸线一节改为「知道技能不会自己生效」——删掉往 SOUL.md 塞一行提醒的建议（那只是又一条每轮付费、同样不保证执行的文字），真正的机制保证只有源码钩子或 `memory.write_approval`。
 - 仓库更名 `hermes-memory-plus` → `hermes-memory-skills`：原名易被误认为插件或项目，实为技能集合。旧名保留重定向。
 - README 拆为中英双语：`README.md`（英文，主页）+ `README.zh-CN.md`（中文），互相链接。
 - `LICENSE` 恢复为纯 MIT 正文，GitHub 许可证探测可正确识别为 MIT；第三方署名统一移入 `THIRD-PARTY.md`。
