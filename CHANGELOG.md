@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- 仓库更名 `hermes-memory-skills` → `hermes-memory-kit`：memory-review 插件加入后，内容不再只是技能。旧名自动重定向。
+- 新增 `plugins/memory-review`：针对 `memory()` 写入的 LLM 审核闸（approve / reject 附理由 / defer 转人工），fail open，复用 Hermes 已配置模型，零新增凭据。含双语插件 README。
+- 仓库级 README 中英双语重写为「工具集」定位：三层结构（闸/纪律/瘦身）+ 两种维护策略 + 安装指引；插件级细节移入 `plugins/memory-review/README*.md` 并互链。
 - README（中英）：新增「discipline 的作用范围」一节——明确 discipline 只规定写入规则，Hermes 的写入不受它强制控制（会话内顺手写基本不经过它，后台提案完全不经它）；定位是写入质量参考，不是写入闸门。
 - README（中英）：新增「MEMORY 的两种维护方式」——路线 A（任写 + cleanup 事后筛 + 80% 黄线硬触发）与路线 B（`memory.write_approval` 全量审核）的取舍；作者采用 A。
 - README（中英）：已知坑补 3 条实测项——凭会话冻结快照写 `patch` `old_text` 会失败（附原子回滚实例）、黄线提醒只在 `memory()` 写入后检查（后台写入绕过检查点）、`old_text` 须与磁盘条目逐字一致（事实可能混在别的条目里）。
