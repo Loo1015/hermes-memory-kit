@@ -136,6 +136,14 @@ are single-use.
 
 - Fail open is a design choice, not a defect: the gate's value is intercepting most bad
   writes, not 100% availability. memory-cleanup is the backstop for whatever slips through.
+- **Truncated reviewer output no longer fails open silently** (v0.6.1): when the JSON is
+  incomplete but the decision is recognizable, it is salvaged by regex (only the three
+  enum values are accepted); only unsalvageable output falls back to pass-through.
+- **Small reviewer models vary between runs**: temperature=0 does not guarantee identical
+  verdicts for identical prompts; borderline fixtures (wrong-target, self-asserted
+  exceptions) were observed flipping between approve/defer/reject. Rule wording removes
+  systematic bias but cannot remove randomness; variance countermeasures (a stronger
+  reviewer model / 3-call majority vote) are documented options, not built in.
 - **Pending doubles as the routing inbox.** `defer` accumulates "worth keeping but misplaced"
   content under `pending/memory-review/`; clear it with `/memory-review list` on a regular basis
   (`reject <id>` to close an item once routed). The queue never touches MEMORY.md and costs no

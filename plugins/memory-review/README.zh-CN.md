@@ -114,6 +114,11 @@ approve **不会直接改 MEMORY.md**：插件只发哈希通行证，落盘仍�
 
 - fail open 是设计选择，不是缺陷：闸的价值在拦截大多数坏写入，不在 100% 可用。
   漏过去的由 memory-cleanup 兜底。
+- **审核输出被 max_tokens 截断时不再直接 fail open**（v0.6.1）：JSON 不完整但 decision
+  可辨认时，按正则抢救 decision（只认 approve/reject/defer 三个枚举值），抢救不出才放行。
+- **小模型审核员存在运行间方差**：temperature=0 不保证同 prompt 同裁决，边界样本
+  （错层 target、自述例外）实测会在 approve/defer/reject 间抖动。规则文本只能压系统性偏差，
+  压不掉随机性；方差对策（更强审核模型 / 三投多数决）见仓库 issue 讨论，未内置。
 - **pending 兼作路由收件箱**：`defer` 会把「有价值但错位」的内容攒在 `pending/memory-review/`，
   需要定期 `/memory-review list` 清理（路由完后 `reject <id>` 关单）。队列不落 MEMORY.md，不占常驻预算；
   同一内容同哈希不会重复堆积（同一 id 覆盖写），改写重提会清掉相似旧提案。

@@ -1,6 +1,6 @@
 name: memory-review
-version: 0.6.0
-# Changelog 0.6.0: defer = human-routing inbox (valuable but not resident-layer stays in pending); reject = discard everywhere (dup/temp/rebuildable/stale/wording). Changelog 0.5.0: tighten environment-memory policy (_RULES only); preserve current defer pending during supersede cleanup.
+version: 0.6.1
+# Changelog 0.6.1: verdict-consistency self-check (5b) after live-model regression: bind decision to reason (route-suggestion => defer, wrong-target => never approve, add-duplicate => reject), scope remove-dedup clause to remove ops only, low-frequency is not a penalty. Changelog 0.6.0: defer = human-routing inbox (valuable but not resident-layer stays in pending); reject = discard everywhere (dup/temp/rebuildable/stale/wording). Changelog 0.5.0: tighten environment-memory policy (_RULES only); preserve current defer pending during supersede cleanup.
 description: "LLM gate for memory() writes: every write is reviewed by a stateless API call against a model already configured in Hermes (three states: approve / reject with reason / defer). Fail open on any reviewer failure. Quality filter, not a security boundary."
 author: "Loo1015"
 provides_hooks:
