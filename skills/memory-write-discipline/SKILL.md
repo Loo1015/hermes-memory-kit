@@ -1,7 +1,7 @@
 ---
 name: memory-write-discipline
 description: Decide where one fact belongs before a single memory write.
-version: 1.1.0
+version: 1.2.0
 author: hermes-memory-plus contributors
 license: MIT
 metadata:
@@ -81,6 +81,14 @@ Don't use for：批量整理、容量治理、删除归并、cron 定时整合 �
 ```
 
 MEMORY.md 很小甚至为空都合理；不把它当默认收纳。
+
+**系统环境记忆从严解释**（与 memory-review 插件 v0.5.0+ 的 `_RULES` 口径一致）：
+
+- 环境配置、端口、路径、启动链、依赖树、安装位置、历史故障、排障经过、性能/成本测量、项目状态和补丁交接，默认归权威配置、项目记录或按需技能，不因「实测过 / 坑大 / 难重建」获得常驻资格。
+- MEMORY 只收事前保护：不知道它会在正常发现/查阅资料前造成具体且严重的错误，并且没有能及时交付的专门归宿。
+- 低频不自动拒绝，高频也不自动准入；判据是漏一次的后果和交付时机。
+- 「详见技能 X」不是自动准入。技能索引已覆盖的不再复制；指针不保证正文被加载，两份副本必然分叉。
+- USER 的稳定跨任务偏好不适用 MEMORY 的严重后果门槛；单项目要求仍归项目文件。
 
 ## 2. offload 判据
 

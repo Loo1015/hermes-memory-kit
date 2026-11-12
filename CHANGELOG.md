@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- `plugins/memory-review` **0.4.0 → 0.6.1**（三连迭代，均过离线回归 M01–M12 + S01–S22）：
+  - **0.5.0 — 原因**：MEMORY.md 被系统环境资料淤积（23 条里 21 条是运维手册/历史故障/项目状态），旧 `_RULES` 还写着「环境事实进 MEMORY.md」，与末尾的例外条款自相矛盾，审核闸实际在放行淤积。**内容**：`_RULES` 重写为「系统环境记忆从严」并声明为唯一实时政策源（README 只概述、不再维护第二份规则副本）；固定判定顺序 = 增删改效果 → 作用域归属 → MEMORY 全局例外 → 重复与写法；MEMORY 唯一例外须同时满足「正常查阅前会犯具体严重错误 + 跨任务 + 无及时交付的专门归宿」，「实测过/坑大/难重建」不再构成常驻资格。另修复 defer 分支 `_purge_superseded` 会删掉刚保存提案自身的控制流 bug（隔离沙盒复现：saved=True → purged_count=1 → 文件消失；修法为 defer 落点排除当前 key）。
+  - **0.6.0 — 原因**：reject 会真丢内容——后台 fork 的提案被拒后无人负责把「该进技能/项目 AGENTS.md」的部分送过去，而这类内容恰恰有保存价值。**内容**：裁决分类改为 **defer = 有价值但错位**（pending 兼作人工路由收件箱），**reject = 任何层都不该存**（重复/临时状态/可重建裸值/过期/空指针/纯写法问题）；target 错层从 reject 改判 defer；混合批按主要内容裁决。双语 README 裁决表同步。
+  - **0.6.1 — 原因**：真实审核模型（deepseek-v4.1-flash）对 22 个合成 fixture 的语义抽样暴露 5 个系统性落点偏移（说了「应归项目记录」仍 reject、错层仍 approve、把 remove 去重条款套到 add、低频当减分项、混合批落点错）和 1 个截断放行 bug（reason 超长被 max_tokens=200 截断 → JSON 解析失败 → 生产 fail-open 放行坏写入）。**内容**：`_RULES` 新增「5b 落点自检」六条（decision 必须与 reason 一致）；「approve 去重」显式限定仅 remove；「target 错层不属写法问题」；reason 限 50 字；`_call_reviewer` 对截断 JSON 按正则抢救 decision（只认三枚举，抢救不出才 fail open）。复测确认系统性失配全部消除；剩余为小模型运行间方差（同 prompt、temperature=0 仍漂移），如实写入 README 已知边界，方差对策（三投多数决/更强模型/机械前置检查）留档未内置。
+- `skills/memory-write-discipline` **1.1.0 → 1.2.0**：MEMORY.md 例外入口新增「系统环境记忆从严解释」清单（环境配置/路径/启动链/故障史/性能测量/项目状态默认归按需资料；只收事前保护；低频不减分、高频不准入；指针不自动准入），与插件 `_RULES` 口径一致。
+- README（中英）：闸的三态描述更新为路由收件箱语义（defer ≠ 拿不准的垃圾站，reject ≠ 丢弃该进其他体系的内容）；已知边界补截断抢救与小模型方差两条。
+
+## Unreleased (2026-11-10/11)
+
 - 仓库更名 `hermes-memory-skills` → `hermes-memory-kit`：memory-review 插件加入后，内容不再只是技能。旧名自动重定向。
 - 新增 `plugins/memory-review`：针对 `memory()` 写入的 LLM 审核闸（approve / reject 附理由 / defer 转人工），fail open，复用 Hermes 已配置模型，零新增凭据。含双语插件 README。
 - 仓库级 README 中英双语重写为「工具集」定位：三层结构（闸/纪律/瘦身）+ 两种维护策略 + 安装指引；插件级细节移入 `plugins/memory-review/README*.md` 并互链。

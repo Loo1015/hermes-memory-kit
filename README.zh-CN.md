@@ -32,11 +32,11 @@ Hermes 每轮都把 `MEMORY.md` 和 `USER.md` 注入系统提示词。三个后�
 
 ### `plugins/memory-review`——闸
 
-针对 `memory()` 写入的 LLM 审核闸。每次写入连同磁盘上的 MEMORY.md/USER.md 快照和浓缩规则表发给审核模型（复用 Hermes 已配置的模型），三态裁决：放行 / 附理由拒绝 / 转人工。
+针对 `memory()` 写入的 LLM 审核闸。每次写入连同磁盘上的 MEMORY.md/USER.md 快照和插件内置规则表（`_RULES`，唯一实时政策源）发给审核模型（复用 Hermes 已配置的模型），三态裁决：放行 / 附理由拒绝 / 转人工。0.6.x 起裁决分类明确：**defer = 有价值但错位**——pending 兼作人工路由收件箱（挪进正确的技能/项目文件/USER 后关单）；**reject = 任何层都不该存**（重复、临时状态、可重建裸值、过期、可按理由改写重提的纯写法问题）。MEMORY 准入从严：环境手册、配置、路径、故障史、项目状态默认归按需资料，只有「正常查阅资料前就会造成具体严重错误」的事前保护才够格。
 
 - **零新增凭据**：审核模型从 `model_aliases` / `providers` 解析；key 只进内存不落盘。
 - **fail open 是设计选择**——它是质量过滤器，不是安全边界。配置与细节：[`plugins/memory-review/README.zh-CN.md`](plugins/memory-review/README.zh-CN.md)（[English](plugins/memory-review/README.md)）。
-- **限制如实写明**：桌面端插件命令的交互菜单不可用（纯文本输出）；后台 fork 的拦截靠搭车回执播报；改写重提自动作废旧提案。
+- **限制如实写明**：桌面端插件命令的交互菜单不可用（纯文本输出）；后台 fork 的拦截靠搭车回执播报；改写重提自动作废旧提案；审核输出被 max_tokens 截断时按正则抢救 decision 而非静默放行（0.6.1）；小审核模型存在运行间方差，边界裁决是概率性的，兜底靠 cleanup。
 
 ### `skills/memory-write-discipline`——纪律（原创）
 

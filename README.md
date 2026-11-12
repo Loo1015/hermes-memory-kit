@@ -33,12 +33,20 @@ The three connect: discipline reduces what needs gating, the gate blocks most of
 ### `plugins/memory-review` — the gate
 
 An LLM review gate for `memory()` writes. Every write is sent — with the current on-disk
-MEMORY.md/USER.md and a condensed rule sheet — to a reviewer model already configured in
-Hermes; verdicts are approve / reject with reason / defer-to-human.
+MEMORY.md/USER.md and the rule sheet embedded in the plugin (`_RULES`, the single live
+policy source) — to a reviewer model already configured in Hermes; verdicts are
+approve / reject with reason / defer-to-human. Since 0.6.x the verdict taxonomy is
+explicit: **defer = worth keeping but misplaced** — pending doubles as a human routing
+inbox (route it to the right skill / project file / USER, then close the item);
+**reject = belongs nowhere** (duplicates, transient state, re-derivable bare values,
+stale facts, wording-only issues the writer can fix and resubmit). Admission to MEMORY
+is strict: environment manuals, configs, paths, incident history and project state go to
+on-demand homes by default; only pre-emptive protections that would cause a concrete
+serious error *before normal lookup* qualify.
 
 - **Zero new credentials**: the reviewer resolves from `model_aliases` / `providers`; keys never leave memory.
 - **Fail open by design** — it is a quality filter, not a security boundary. Details and config: [`plugins/memory-review/README.md`](plugins/memory-review/README.md) ([中文](plugins/memory-review/README.zh-CN.md)).
-- **Honestly documented limits**: desktop interactive menus don't work from plugin commands (text-only output); background-fork blocks are surfaced via ride-along receipts; a rewrite loop auto-supersedes stale pending proposals.
+- **Honestly documented limits**: desktop interactive menus don't work from plugin commands (text-only output); background-fork blocks are surfaced via ride-along receipts; a rewrite loop auto-supersedes stale pending proposals; truncated reviewer output is salvaged by regex instead of failing open (0.6.1); small reviewer models vary between identical runs — borderline verdicts are probabilistic, cleanup remains the backstop.
 
 ### `skills/memory-write-discipline` — the discipline (original)
 
