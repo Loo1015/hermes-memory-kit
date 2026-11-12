@@ -37,7 +37,7 @@ from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-_HERMES_HOME = Path(os.environ.get("HERMES_HOME", Path.home() / ".hermes" if (Path.home() / ".hermes").exists() else "D:/Hermes"))
+_HERMES_HOME = Path(os.environ.get("HERMES_HOME", str(Path.home() / ".hermes")))
 _MEMORIES_DIR = _HERMES_HOME / "memories"
 _REVIEWABLE_TOOLS = {"memory"}  # skills 自进化走 skill_manage，有意不拦（用户拍板：写差技能不占常驻预算，cleanup 兜底）
 _RULES = """你是记忆写入审核员。本常量是实时审核政策的唯一来源。审核整批 operations，返回严格 JSON：

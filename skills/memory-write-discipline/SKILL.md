@@ -26,7 +26,7 @@ Don't use for：批量整理、容量治理、删除归并、cron 定时整合 �
 - cap 读 `config.yaml` 的 `memory.memory_char_limit` / `user_char_limit`，或 `hermes memory status`。**不要用社区文档里的 2200 / 1375**。
 - 阈值按比例：80% 黄线、95% 红线。
 - 按**字符数**不是字节数（中文 1 字 = 3 字节），也不是 GPT 模型的 token 数（">6000 tokens" 是 `memory_char_limit` 按 token 计的旧说法，本机 6000 是字符）。
-- **量当前值不要读文件字节**：`D:\Hermes\memories\MEMORY.md` 的字节数含中文 3 字节/字，会虚高约 3 倍（例：846 字符 → 1262 字节）。以 `memory()` 工具回报的 current/limit 为准；需要自己算就按字符数读，别用 `os.path.getsize`。
+- **量当前值不要读文件字节**：`$HERMES_HOME/memories/MEMORY.md` 的字节数含中文 3 字节/字，会虚高约 3 倍（例：846 字符 → 1262 字节）。以 `memory()` 工具回报的 current/limit 为准；需要自己算就按字符数读，别用 `os.path.getsize`。
 - MEMORY.md 接近满时，默认它没有余量：新增必须先腾出等量空间（同一个原子 batch），或改道。
 
 ## 0.5 写后容量提醒（写完必须执行）
